@@ -2,11 +2,24 @@ import express from "express";
 import multer from "multer";
 import crypto from "crypto";
 import fs from "fs";
-import cors from 'express';
+import cors from 'cors';
 
 
 const app = express();
-const upload = multer({ dest: "uploads/" });
+app.use(cors());
+const upload = multer({
+  dest: "uploads/",
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ["image/png", "image/jpeg", "application/pdf"];
+
+    if (!allowedTypes.includes(file.mimetype)) {
+      return cb(new Error("Invalid file type"));
+    }
+
+    cb(null, true);
+  }
+});
 
 app.post("/upload", upload.single("file"), async (req, res) => {
   const filePath = req.file.path;
