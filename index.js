@@ -1,12 +1,18 @@
 import express from "express";
 import multer from "multer";
-import crypto from "crypto";
-import fs from "fs";
-import cors from 'express';
-
+import * as crypto from "crypto";
+import * as fs from "fs";
+import fetch from "node-fetch"; // npm install node-fetch@2
 
 const app = express();
 const upload = multer({ dest: "uploads/" });
+
+// CORS so frontend can call this directly
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+  next();
+});
 
 app.post("/upload", upload.single("file"), async (req, res) => {
   const filePath = req.file.path;
@@ -14,7 +20,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
   const hash = crypto.createHash("sha256").update(fileBuffer).digest("hex");
   fs.unlinkSync(filePath);
 
-  // ── NEW: record hash on your chain ──────────────────
+  // Record hash on the blockchain
   let chainResult = null;
   try {
     const response = await fetch("http://localhost:3000/record", {
@@ -30,19 +36,14 @@ app.post("/upload", upload.single("file"), async (req, res) => {
   } catch (err) {
     console.error("Chain recording failed:", err.message);
   }
-  // ────────────────────────────────────────────────────
 
   res.json({
     fileName: req.file.originalname,
     hash: hash,
-    chain: chainResult  // includes block number, block hash, timestamp
+    chain: chainResult
   });
 });
 
-app.get("/", (req, res) => {
-  res.send("Hashing API is running. Use POST /upload to submit files.");
-});
-
-app.listen(4000, () => {  // changed to 4000 so it doesn't clash with your chain on 3000
-  console.log("Hashing API running on port 4000");
+app.listen(4000, () => {
+  console.log("Hashing API running on http://localhost:4000");
 });
