@@ -11,6 +11,42 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// ===== Audit Log Schema Helpers =====
+
+const allowedActions = [
+    "LOGIN",
+    "LOGOUT",
+    "CREATE",
+    "READ",
+    "UPDATE",
+    "DELETE"
+    ];
+
+    function validateAuditEvent(event) {
+    const requiredFields = [
+        "userId",
+        "action",
+        "resource",
+        "status"
+    ];
+
+    for (let field of requiredFields) {
+        if (!event[field]) {
+        return `Missing field: ${field}`;
+        }
+    }
+
+    if (!allowedActions.includes(event.action)) {
+        return "Invalid action type";
+    }
+
+    if (!["SUCCESS", "FAILURE"].includes(event.status)) {
+        return "Invalid status";
+    }
+
+    return null;
+}
+
 let chain = [];
 
 function isValidChain(chain) {
@@ -39,21 +75,21 @@ function isValidChain(chain) {
 
 const filePath = path.join(__dirname, "chain.json");
 
-function saveChain() {
-  fs.writeFileSync(filePath, JSON.stringify(chain, null, 2));
-}
+    function saveChain() {
+    fs.writeFileSync(filePath, JSON.stringify(chain, null, 2));
+    }
 
-function loadChain() {
-  try {
-    const data = fs.readFileSync(filePath, "utf8");
-    chain = JSON.parse(data);
-    console.log("Loaded existing chain");
-  } catch (err) {
-    console.log("No chain found, creating genesis block");
-    chain = [createGenesisBlock()];
-    saveChain();
-  }
-}
+    function loadChain() {
+    try {
+        const data = fs.readFileSync(filePath, "utf8");
+        chain = JSON.parse(data);
+        console.log("Loaded existing chain");
+    } catch (err) {
+        console.log("No chain found, creating genesis block");
+        chain = [createGenesisBlock()];
+        saveChain();
+    }
+    }
 
 
 function createGenesisBlock() {
@@ -64,7 +100,8 @@ function createGenesisBlock() {
     index: 0,
     timestamp: fixedTimestamp,
     data: "Genesis Block",
-    previousHash: "0"
+    previousHash: "0",
+    hash: "genesis-hash"
     };
 
     block.hash = calculateHash(
@@ -79,6 +116,53 @@ function createGenesisBlock() {
 }
 
 loadChain();
+
+function addBlock(data) {
+    const block = {
+        id: crypto.randomUUID(), // 🔥 missing
+        index: chain.length,
+        timestamp: new Date().toISOString(),
+        data: data,
+        previousHash: chain[chain.length - 1].hash
+    };
+
+    block.hash = calculateHash(
+        block.id,
+        block.index,
+        block.timestamp,
+        block.data,
+        block.previousHash
+    );
+
+    chain.push(block);   // 🔥 missing
+    saveChain();         // 🔥 persist
+
+    return block;        // 🔥 VERY IMPORTANT
+}
+
+    app.post("/addLog", (req, res) => {
+    const event = req.body;
+
+    // 🔒 Validate event
+    const error = validateAuditEvent(event);
+    if (error) {
+        return res.status(400).json({ error });
+    }
+
+    // 🆔 Add system-generated fields
+    event.eventId = crypto.randomUUID();
+    event.timestamp = new Date().toISOString();
+    event.ipAddress = req.ip;
+    event.userAgent = req.headers["user-agent"];
+
+    // ⛓ Add to blockchain
+    const newBlock = addBlock(event);
+
+    res.json({
+        message: "Audit log added successfully",
+        block: newBlock
+    });
+    });
 
 function calculateHash(id, index, timestamp, data, previousHash) {
     return crypto

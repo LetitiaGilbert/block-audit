@@ -6,5 +6,109 @@
     "data": "Genesis Block",
     "previousHash": "0",
     "hash": "10aaa8db2f08dda0161dc9723a06aca8966244119512446ba6c1890c3d201eea"
+  },
+  {
+    "id": "b62b1839-bfef-4072-af64-16b5b4ba5eb2",
+    "index": 1,
+    "timestamp": "2026-03-30T15:11:53.699Z",
+    "data": {
+      "fileHash": "abc123",
+      "filename": "file1.pdf",
+      "uploadedBy": "letitia"
+    },
+    "previousHash": "10aaa8db2f08dda0161dc9723a06aca8966244119512446ba6c1890c3d201eea",
+    "hash": "d41dce049ae73a1cc71a67ab97ba763b6f26dc7cee4abf410d57c6bdf31583dd"
+  },
+  {
+    "id": "4b7fa9d3-7b4c-427e-9e54-075d808f7cae",
+    "index": 2,
+    "timestamp": "2026-03-30T15:20:00.506Z",
+    "data": {
+      "fileHash": "abc223",
+      "filename": "",
+      "uploadedBy": "letitia"
+    },
+    "previousHash": "d41dce049ae73a1cc71a67ab97ba763b6f26dc7cee4abf410d57c6bdf31583dd",
+    "hash": "3952a5c21c84430267ca15d438f8d3ca55cd0168b4e797f05f378ca5011a16c7"
+  },
+  {
+    "id": "8fda5178-f529-43ea-a44b-8f59315dee35",
+    "index": 3,
+    "timestamp": "2026-04-01T06:46:45.384Z",
+    "data": {
+      "userId": "user123",
+      "action": "LOGIN",
+      "resource": "dashboard",
+      "status": "SUCCESS",
+      "eventId": "d6635ef2-0be8-4e67-a607-30726a27ad78",
+      "timestamp": "2026-04-01T06:46:45.384Z",
+      "ipAddress": "::1",
+      "userAgent": "curl/8.7.1"
+    },
+    "previousHash": "3952a5c21c84430267ca15d438f8d3ca55cd0168b4e797f05f378ca5011a16c7",
+    "hash": "ebb42357ceb721d4a86480f391c87d98a3460f2dbd967b060b87a5f0020ae42b"
+  },
+  {
+    "id": "ea168189-763e-491c-a40b-e0a406814273",
+    "index": 4,
+    "timestamp": "2026-04-01T06:47:39.370Z",
+    "data": {
+      "fileHash": "abc123hash",
+      "filename": "report.pdf",
+      "uploadedBy": "letitia"
+    },
+    "previousHash": "ebb42357ceb721d4a86480f391c87d98a3460f2dbd967b060b87a5f0020ae42b",
+    "hash": "f7dac0448ea82e91f6b878b2f4172c22264d89d3a1e0052dc416375ccbacdb79"
+  },
+  {
+    "id": "ea481788-4c8f-41b1-afce-5f23fff2b008",
+    "index": 5,
+    "timestamp": "2026-04-02T05:38:21.239Z",
+    "data": {
+      "userId": "letitia",
+      "action": "CREATE",
+      "resource": "dashboard",
+      "status": "SUCCESS",
+      "eventId": "66d96614-517b-4d20-9b0e-3010dd4f0ce0",
+      "timestamp": "2026-04-02T05:38:21.239Z",
+      "ipAddress": "::1",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+    },
+    "previousHash": "f7dac0448ea82e91f6b878b2f4172c22264d89d3a1e0052dc416375ccbacdb79",
+    "hash": "a2dbe97b60ac38caa1caea15821a347964c74b3a218ad5a0b346045ced6c9a70"
+  },
+  {
+    "id": "12475ae1-083b-4d38-a7e6-a62a585b0a7f",
+    "index": 6,
+    "timestamp": "2026-04-02T05:38:22.236Z",
+    "data": {
+      "userId": "letitia",
+      "action": "CREATE",
+      "resource": "dashboard",
+      "status": "SUCCESS",
+      "eventId": "334e10c7-bb71-4819-b947-41b0de3b43c7",
+      "timestamp": "2026-04-02T05:38:22.236Z",
+      "ipAddress": "::1",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+    },
+    "previousHash": "a2dbe97b60ac38caa1caea15821a347964c74b3a218ad5a0b346045ced6c9a70",
+    "hash": "96c4fb6893446aa75e55dc9d5a7f55c6aec55802ed813eb0e156729273af8b8d"
+  },
+  {
+    "id": "44d06e74-6bfe-453e-bbd2-3e66c3e6f75f",
+    "index": 7,
+    "timestamp": "2026-04-02T05:38:23.051Z",
+    "data": {
+      "userId": "letitia",
+      "action": "CREATE",
+      "resource": "dashboard",
+      "status": "SUCCESS",
+      "eventId": "01ac80ea-5cbf-4400-9d86-271b4bc72e1f",
+      "timestamp": "2026-04-02T05:38:23.051Z",
+      "ipAddress": "::1",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+    },
+    "previousHash": "96c4fb6893446aa75e55dc9d5a7f55c6aec55802ed813eb0e156729273af8b8d",
+    "hash": "902039a96d27e6178aab8d9f925c7d2d22310a79697a89fbe72130f74fea0014"
   }
 ]
