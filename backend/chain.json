@@ -5,110 +5,160 @@
     "timestamp": "2026-01-01T00:00:00.000Z",
     "data": "Genesis Block",
     "previousHash": "0",
-    "hash": "10aaa8db2f08dda0161dc9723a06aca8966244119512446ba6c1890c3d201eea"
+    "hash": "e5b8d8309e80cdd289e15785c797533dbee93d4bb777a01d7f1d81c91160b7d9",
+    "nonce": 0,
+    "signature": "9563cd8d1a6a53feddf495789ad81920c7054a813b7db022085ffcc5e6da07f9"
   },
   {
-    "id": "b62b1839-bfef-4072-af64-16b5b4ba5eb2",
+    "id": "2bfc7acd-6c27-4a98-a2c8-51609e6f7694",
     "index": 1,
-    "timestamp": "2026-03-30T15:11:53.699Z",
+    "timestamp": "2026-04-04T14:21:43.871Z",
     "data": {
-      "fileHash": "abc123",
-      "filename": "file1.pdf",
-      "uploadedBy": "letitia"
-    },
-    "previousHash": "10aaa8db2f08dda0161dc9723a06aca8966244119512446ba6c1890c3d201eea",
-    "hash": "d41dce049ae73a1cc71a67ab97ba763b6f26dc7cee4abf410d57c6bdf31583dd"
-  },
-  {
-    "id": "4b7fa9d3-7b4c-427e-9e54-075d808f7cae",
-    "index": 2,
-    "timestamp": "2026-03-30T15:20:00.506Z",
-    "data": {
-      "fileHash": "abc223",
-      "filename": "",
-      "uploadedBy": "letitia"
-    },
-    "previousHash": "d41dce049ae73a1cc71a67ab97ba763b6f26dc7cee4abf410d57c6bdf31583dd",
-    "hash": "3952a5c21c84430267ca15d438f8d3ca55cd0168b4e797f05f378ca5011a16c7"
-  },
-  {
-    "id": "8fda5178-f529-43ea-a44b-8f59315dee35",
-    "index": 3,
-    "timestamp": "2026-04-01T06:46:45.384Z",
-    "data": {
-      "userId": "user123",
+      "userId": "letitia",
       "action": "LOGIN",
       "resource": "dashboard",
       "status": "SUCCESS",
-      "eventId": "d6635ef2-0be8-4e67-a607-30726a27ad78",
-      "timestamp": "2026-04-01T06:46:45.384Z",
+      "eventId": "f5e4a63b-14e2-420d-96de-7f378aefa6a2",
+      "timestamp": "2026-04-04T14:21:43.870Z",
       "ipAddress": "::1",
       "userAgent": "curl/8.7.1"
     },
-    "previousHash": "3952a5c21c84430267ca15d438f8d3ca55cd0168b4e797f05f378ca5011a16c7",
-    "hash": "ebb42357ceb721d4a86480f391c87d98a3460f2dbd967b060b87a5f0020ae42b"
+    "previousHash": "e5b8d8309e80cdd289e15785c797533dbee93d4bb777a01d7f1d81c91160b7d9",
+    "hash": "0004713fd4121cdbde14a532195287db8743ea40dea58f506ff3559b213d78df",
+    "nonce": 1484,
+    "signature": "faee4b7a309450d4690d102b6b4e4bc902506fb3d0dd62785cf50d76b207100c"
   },
   {
-    "id": "ea168189-763e-491c-a40b-e0a406814273",
+    "id": "ce136312-e725-4c6a-a93e-d2d3a879cb30",
+    "index": 2,
+    "timestamp": "2026-04-05T05:57:33.707Z",
+    "data": {
+      "userId": "letitia",
+      "action": "CREATE",
+      "resource": "dashboard",
+      "status": "SUCCESS",
+      "eventId": "78954fb7-50ba-44ad-bc71-50eac4528246",
+      "timestamp": "2026-04-05T05:57:33.707Z",
+      "ipAddress": "::1",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+    },
+    "previousHash": "0004713fd4121cdbde14a532195287db8743ea40dea58f506ff3559b213d78df",
+    "hash": "0004306f5c29474e4e2282cdc814db0286c5b1624da6612290f334d929cdc62f",
+    "nonce": 93,
+    "signature": "561189966e4c87d9c9eae52b27f8dd4e4c8082dfc433c7a6aab975e8e0f952ce"
+  },
+  {
+    "id": "eae0874c-22f7-4fa5-936a-79590532647e",
+    "index": 3,
+    "timestamp": "2026-04-05T05:57:34.353Z",
+    "data": {
+      "userId": "letitia",
+      "action": "CREATE",
+      "resource": "dashboard",
+      "status": "SUCCESS",
+      "eventId": "aaf63a18-ff72-4d7d-8673-d911573c6221",
+      "timestamp": "2026-04-05T05:57:34.353Z",
+      "ipAddress": "::1",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+    },
+    "previousHash": "0004306f5c29474e4e2282cdc814db0286c5b1624da6612290f334d929cdc62f",
+    "hash": "000415f90372eee7343846a11c9e82933ff3391ca4ccee33b5ada37da3f6d3fd",
+    "nonce": 1119,
+    "signature": "3832ea9e8d41c0370feaea199ae31e0d74223173f963ff62a9507a159cf98e9e"
+  },
+  {
+    "id": "8341cce3-a1c4-4ca2-8aff-10599c059472",
     "index": 4,
-    "timestamp": "2026-04-01T06:47:39.370Z",
+    "timestamp": "2026-04-05T05:57:34.838Z",
     "data": {
-      "fileHash": "abc123hash",
-      "filename": "report.pdf",
-      "uploadedBy": "letitia"
+      "userId": "letitia",
+      "action": "CREATE",
+      "resource": "dashboard",
+      "status": "SUCCESS",
+      "eventId": "5b856414-1454-45e4-aec5-d494d08e2741",
+      "timestamp": "2026-04-05T05:57:34.838Z",
+      "ipAddress": "::1",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
     },
-    "previousHash": "ebb42357ceb721d4a86480f391c87d98a3460f2dbd967b060b87a5f0020ae42b",
-    "hash": "f7dac0448ea82e91f6b878b2f4172c22264d89d3a1e0052dc416375ccbacdb79"
+    "previousHash": "000415f90372eee7343846a11c9e82933ff3391ca4ccee33b5ada37da3f6d3fd",
+    "hash": "0005ee5162af7423e2567a78705ec9fdec885b01413eba30b1ae431173370ade",
+    "nonce": 242,
+    "signature": "3472ccdbceaf8eca89e0c8a2ee93e2d124dd2e107d0db04495b22e79b152e1bc"
   },
   {
-    "id": "ea481788-4c8f-41b1-afce-5f23fff2b008",
+    "id": "22e0831a-2678-4929-a80f-c0ea5dd9262f",
     "index": 5,
-    "timestamp": "2026-04-02T05:38:21.239Z",
+    "timestamp": "2026-04-05T05:57:35.090Z",
     "data": {
       "userId": "letitia",
       "action": "CREATE",
       "resource": "dashboard",
       "status": "SUCCESS",
-      "eventId": "66d96614-517b-4d20-9b0e-3010dd4f0ce0",
-      "timestamp": "2026-04-02T05:38:21.239Z",
+      "eventId": "7c777a74-91a0-4b41-8108-1b75bdd89e6b",
+      "timestamp": "2026-04-05T05:57:35.090Z",
       "ipAddress": "::1",
       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
     },
-    "previousHash": "f7dac0448ea82e91f6b878b2f4172c22264d89d3a1e0052dc416375ccbacdb79",
-    "hash": "a2dbe97b60ac38caa1caea15821a347964c74b3a218ad5a0b346045ced6c9a70"
+    "previousHash": "0005ee5162af7423e2567a78705ec9fdec885b01413eba30b1ae431173370ade",
+    "hash": "000d9e2e61a9e789cf527743ce22e4fb2d210abb34a0c899d44893b1a9b1fe8a",
+    "nonce": 2996,
+    "signature": "9941c316698b6906fb60c09bc26fe238f961cb89906bff23539c8ba14e1ca280"
   },
   {
-    "id": "12475ae1-083b-4d38-a7e6-a62a585b0a7f",
+    "id": "3f10bfb0-9448-438a-9d9d-3ef2b2060300",
     "index": 6,
-    "timestamp": "2026-04-02T05:38:22.236Z",
+    "timestamp": "2026-04-05T06:00:06.575Z",
     "data": {
       "userId": "letitia",
       "action": "CREATE",
       "resource": "dashboard",
       "status": "SUCCESS",
-      "eventId": "334e10c7-bb71-4819-b947-41b0de3b43c7",
-      "timestamp": "2026-04-02T05:38:22.236Z",
+      "eventId": "ca7aff1b-50aa-4803-bef0-e3e1bc5b397d",
+      "timestamp": "2026-04-05T06:00:06.575Z",
       "ipAddress": "::1",
       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
     },
-    "previousHash": "a2dbe97b60ac38caa1caea15821a347964c74b3a218ad5a0b346045ced6c9a70",
-    "hash": "96c4fb6893446aa75e55dc9d5a7f55c6aec55802ed813eb0e156729273af8b8d"
+    "previousHash": "000d9e2e61a9e789cf527743ce22e4fb2d210abb34a0c899d44893b1a9b1fe8a",
+    "hash": "00054140addcf72be895e30e52e02f54d5e6d7138402e6d5511d8dc616301bf5",
+    "nonce": 1589,
+    "signature": "62056b985bbc9441499b6a74131aac49cb7989f6c76e2c314da0d7202a04bd02"
   },
   {
-    "id": "44d06e74-6bfe-453e-bbd2-3e66c3e6f75f",
+    "id": "1a4b72ca-d39e-4730-ab48-9c5977b1c811",
     "index": 7,
-    "timestamp": "2026-04-02T05:38:23.051Z",
+    "timestamp": "2026-04-05T06:02:18.142Z",
     "data": {
-      "userId": "letitia",
-      "action": "CREATE",
-      "resource": "dashboard",
+      "userId": "leanna",
+      "action": "DELETE",
+      "resource": "wifi",
       "status": "SUCCESS",
-      "eventId": "01ac80ea-5cbf-4400-9d86-271b4bc72e1f",
-      "timestamp": "2026-04-02T05:38:23.051Z",
+      "eventId": "f54bf9f9-0c5e-4498-9ec4-dbcb6438e2a8",
+      "timestamp": "2026-04-05T06:02:18.142Z",
       "ipAddress": "::1",
       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
     },
-    "previousHash": "96c4fb6893446aa75e55dc9d5a7f55c6aec55802ed813eb0e156729273af8b8d",
-    "hash": "902039a96d27e6178aab8d9f925c7d2d22310a79697a89fbe72130f74fea0014"
+    "previousHash": "00054140addcf72be895e30e52e02f54d5e6d7138402e6d5511d8dc616301bf5",
+    "hash": "000327793bb092c674307bb03bfd84eccde3ee64fd40aed2e17d28fe8a91b46e",
+    "nonce": 3727,
+    "signature": "6b060a4975195bf73114e5e80356af7542cb2531f21eae1089787f4d27481942"
+  },
+  {
+    "id": "d4a0381f-9164-4fc1-aefd-4991d8c4aee8",
+    "index": 8,
+    "timestamp": "2026-04-05T17:00:37.545Z",
+    "data": {
+      "userId": "Letitia",
+      "action": "CREATE",
+      "resource": "dashboard",
+      "status": "SUCCESS",
+      "eventId": "10c2ee66-66c3-4f5e-9457-a5924a3209c0",
+      "timestamp": "2026-04-05T17:00:37.545Z",
+      "ipAddress": "::1",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+    },
+    "previousHash": "000327793bb092c674307bb03bfd84eccde3ee64fd40aed2e17d28fe8a91b46e",
+    "hash": "00032da8e9efd83bb1d6ec81b4e17cee235042a56acab439cd51822dbbee0dea",
+    "nonce": 3399,
+    "signature": "6af2064ae1879bbf83736feba361f294081d2f03b4e79034e1e10d22c5a5a5ae"
   }
 ]

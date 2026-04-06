@@ -1,0 +1,18 @@
+{
+  "admin": {
+    "password": "password",
+    "role": "admin"
+  },
+  "auditor": {
+    "password": "auditor123",
+    "role": "auditor"
+  },
+  "employee": {
+    "password": "employee123",
+    "role": "employee"
+  },
+  "employee2": {
+    "password": "emp2",
+    "role": "employee"
+  }
+}
