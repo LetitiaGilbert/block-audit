@@ -8,6 +8,7 @@ import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import axios from "axios";
 import jwt from "jsonwebtoken";
+import multer from "multer";
 
 const app = express();
 
@@ -28,6 +29,38 @@ const SECRET_KEY = process.env.SECRET_KEY || "dev-secret-key";
 const JWT_SECRET = process.env.JWT_SECRET || "jwt-dev-secret-key";
 app.use(cors());
 app.use(express.json());
+
+// Create uploads directory if it doesn't exist
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir);
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (req, file, cb) => {
+    // Generate unique filename with timestamp and random string
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ["image/png", "image/jpeg", "image/jpg", "application/pdf", "text/plain"];
+    const allowedExtensions = [".png", ".jpg", ".jpeg", ".pdf", ".txt"];
+
+    if (!allowedTypes.includes(file.mimetype) || !allowedExtensions.includes(path.extname(file.originalname).toLowerCase())) {
+      return cb(new Error("Invalid file type. Allowed: PNG, JPG, PDF, TXT"));
+    }
+
+    cb(null, true);
+  }
+});
 
 const usersFilePath = path.join(__dirname, "users.json");
 
@@ -342,7 +375,7 @@ function calculateHash(id, index, timestamp, data, previousHash, nonce = 0) {
 }
 
 app.post("/record", auth, authorize("employee","admin"),  (req, res) => {
-    const { hash, filename, uploadedBy } = req.body;
+    const { hash, filename, uploadedBy, filePath, size, mimetype, timestamp } = req.body;
 
     if (typeof hash !== "string" || typeof filename !== "string") {
         return res.status(400).json({ error: "Invalid input types" });
@@ -359,7 +392,15 @@ app.post("/record", auth, authorize("employee","admin"),  (req, res) => {
         return res.status(400).json({ error: "File already recorded" });
     }
 
-    const newBlock = addBlock({ fileHash: hash, filename, uploadedBy });
+    const newBlock = addBlock({ 
+        fileHash: hash, 
+        filename, 
+        uploadedBy, 
+        filePath, 
+        size, 
+        mimetype, 
+        timestamp: timestamp || Date.now() 
+    });
 
     res.json({
         message: "Block added",
@@ -367,6 +408,42 @@ app.post("/record", auth, authorize("employee","admin"),  (req, res) => {
         blockHash: newBlock.hash
     });
     });
+
+app.post("/upload", auth, authorize("employee","admin"), upload.single("file"), (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: "No file uploaded" });
+        }
+
+        const filePath = req.file.path;
+        const fileBuffer = fs.readFileSync(filePath);
+        const hash = crypto.createHash("sha256").update(fileBuffer).digest("hex");
+
+        // Record on blockchain
+        const newBlock = addBlock({ 
+            fileHash: hash, 
+            filename: req.file.originalname, 
+            uploadedBy: req.user.username, // from auth
+            filePath: req.file.filename, 
+            size: req.file.size, 
+            mimetype: req.file.mimetype, 
+            timestamp: Date.now() 
+        });
+
+        res.json({
+            message: "File uploaded and recorded successfully",
+            fileName: req.file.originalname,
+            storedName: req.file.filename,
+            hash: hash,
+            size: req.file.size,
+            blockNumber: newBlock.index,
+            blockHash: newBlock.hash
+        });
+    } catch (err) {
+        console.error("Upload error:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
 
 app.post("/addPeer", auth, authorize("admin"), (req, res) => {
     if (!peers.includes(req.body.peer)){
@@ -390,6 +467,23 @@ app.get("/verify", auth, authorize("auditor","admin"), (req, res) => {
     const valid = isValidChain(chain);
     res.json({ valid });
     });
+
+app.get("/download/:hash", auth, authorize("employee","auditor","admin"), (req, res) => {
+    const found = chain.find(
+        block => block.data.fileHash === req.params.hash
+    );
+
+    if (!found || !found.data.filePath) {
+        return res.status(404).json({ error: "File not found" });
+    }
+
+    const filePath = path.join(__dirname, 'uploads', found.data.filePath);
+    if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ error: "File not found on disk" });
+    }
+
+    res.download(filePath, found.data.filename);
+});
 
 app.get("/chain", auth, (req, res) => {
     // Employees can still view the full chain in the UI, while personal activity is tied to their own username.

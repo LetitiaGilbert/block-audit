@@ -50,6 +50,8 @@ const [auditUserFilter, setAuditUserFilter] = useState('');
 const [auditActionFilter, setAuditActionFilter] = useState('');
 const [auditDateFilter, setAuditDateFilter] = useState('');
 const [auditTxFilter, setAuditTxFilter] = useState('');
+const [uploadFile, setUploadFile] = useState(null);
+const [uploadStatus, setUploadStatus] = useState('');
 
     useEffect(() => {
     if (!isLoggedIn) return;
@@ -141,16 +143,23 @@ const [auditTxFilter, setAuditTxFilter] = useState('');
     const isAdmin = role === "admin";
     const isEmployee = role === "employee";
 
-        const lineData = {
-    labels: events.slice(0, 8).map(e => `#${e.index}`),
-    datasets: [
-        {
-        label: "Total Events",
-        data: events.slice(0, 8).map((_, i) => events.length - (7 - i)),
-        borderColor: "#00e5ff",
-        tension: 0.4
-        }
-    ]
+    const eventVolumeByDate = events.reduce((acc, event) => {
+        const date = event.timestamp.split('T')[0]; // YYYY-MM-DD
+        acc[date] = (acc[date] || 0) + 1;
+        return acc;
+    }, {});
+
+    const sortedDates = Object.keys(eventVolumeByDate).sort();
+    const lineData = {
+        labels: sortedDates,
+        datasets: [
+            {
+                label: "Events per Day",
+                data: sortedDates.map(date => eventVolumeByDate[date]),
+                borderColor: "#00e5ff",
+                tension: 0.4
+            }
+        ]
     };
 
     const failedEvents = events.filter(e => e.status === "FAILURE").length;
@@ -354,84 +363,131 @@ Audit<span className="text-cyan-400">Chain</span>
 {/* KPI */}
 
     {canAddEvent ? (
-    <div className="bg-[#0f172a] p-6 rounded-xl space-y-4">
-        <h3 className="text-gray-400">Add New Audit Event</h3>
-        <div className="grid grid-cols-2 gap-4">
-            <input
-                type="text"
-                placeholder="User ID"
-                value={role === 'employee' ? currentUser : newEvent.userId}
-                onChange={(e) => setNewEvent({...newEvent, userId: e.target.value})}
-                disabled={role === 'employee'}
-                className="bg-[#020617] border border-cyan-800 rounded px-3 py-2 text-white disabled:opacity-60"
-            />
-            <select
-                value={newEvent.action}
-                onChange={(e) => setNewEvent({...newEvent, action: e.target.value})}
-                className="bg-[#020617] border border-cyan-800 rounded px-3 py-2 text-white"
-            >
-                <option value="CREATE">CREATE</option>
-                <option value="READ">READ</option>
-                <option value="UPDATE">UPDATE</option>
-                <option value="DELETE">DELETE</option>
-                <option value="LOGIN">LOGIN</option>
-                <option value="LOGOUT">LOGOUT</option>
-            </select>
-            <input
-                type="text"
-                placeholder="Resource"
-                value={newEvent.resource}
-                onChange={(e) => setNewEvent({...newEvent, resource: e.target.value})}
-                className="bg-[#020617] border border-cyan-800 rounded px-3 py-2 text-white"
-            />
-            <select
-                value={newEvent.status}
-                onChange={(e) => setNewEvent({...newEvent, status: e.target.value})}
-                className="bg-[#020617] border border-cyan-800 rounded px-3 py-2 text-white"
-            >
-                <option value="SUCCESS">SUCCESS</option>
-                <option value="FAILURE">FAILURE</option>
-            </select>
-        </div>
-        <button
-        onClick={async () => {
-            try {
-                const response = await fetch(`${API_URL}/addLog`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    },
-                    body: JSON.stringify(newEvent)
-                });
-                if (response.ok) {
-                    alert("Event added successfully!");
-                    setNewEvent({
-                        userId: "",
-                        action: "CREATE",
-                        resource: "",
-                        status: "SUCCESS"
-                    });
-                } else {
-                    alert("Failed to add event: " + response.statusText);
-                }
-            } catch (error) {
-                alert("Error adding event: " + error.message);
+  <div className="bg-[#0f172a] p-6 rounded-xl space-y-4">
+    <h3 className="text-gray-400">Add New Audit Event</h3>
+    <div className="grid grid-cols-2 gap-4">
+      <input
+        type="text"
+        placeholder="User ID"
+        value={role === 'employee' ? currentUser : newEvent.userId}
+        onChange={(e) => setNewEvent({...newEvent, userId: e.target.value})}
+        disabled={role === 'employee'}
+        className="bg-[#020617] border border-cyan-800 rounded px-3 py-2 text-white disabled:opacity-60"
+      />
+      <select
+        value={newEvent.action}
+        onChange={(e) => setNewEvent({...newEvent, action: e.target.value})}
+        className="bg-[#020617] border border-cyan-800 rounded px-3 py-2 text-white"
+      >
+        <option value="CREATE">CREATE</option>
+        <option value="READ">READ</option>
+        <option value="UPDATE">UPDATE</option>
+        <option value="DELETE">DELETE</option>
+        <option value="LOGIN">LOGIN</option>
+        <option value="LOGOUT">LOGOUT</option>
+      </select>
+      <input
+        type="text"
+        placeholder="Resource"
+        value={newEvent.resource}
+        onChange={(e) => setNewEvent({...newEvent, resource: e.target.value})}
+        className="bg-[#020617] border border-cyan-800 rounded px-3 py-2 text-white"
+      />
+      <select
+        value={newEvent.status}
+        onChange={(e) => setNewEvent({...newEvent, status: e.target.value})}
+        className="bg-[#020617] border border-cyan-800 rounded px-3 py-2 text-white"
+      >
+        <option value="SUCCESS">SUCCESS</option>
+        <option value="FAILURE">FAILURE</option>
+      </select>
+    </div>
+
+    {/* ── File attachment (optional) ── */}
+    <div>
+      <p className="text-xs text-gray-500 mb-2">Attach a document (optional)</p>
+      <input
+        type="file"
+        accept=".png,.jpg,.jpeg,.pdf,.txt"
+        onChange={(e) => setUploadFile(e.target.files[0])}
+        className="w-full bg-[#020617] border border-cyan-800 rounded px-3 py-2 text-white
+                   file:mr-4 file:py-1 file:px-3 file:rounded file:border-0
+                   file:text-sm file:font-semibold file:bg-cyan-500 file:text-white
+                   hover:file:bg-cyan-600"
+      />
+      {uploadFile && (
+        <p className="text-xs text-cyan-400 mt-1">📎 {uploadFile.name}</p>
+      )}
+    </div>
+
+    <button
+      onClick={async () => {
+        try {
+          // 1. Upload file first (if one was attached)
+          let fileInfo = null;
+          if (uploadFile) {
+            setUploadStatus("Uploading file...");
+            const formData = new FormData();
+            formData.append("file", uploadFile);
+            const uploadRes = await fetch(`${API_URL}/upload`, {
+              method: "POST",
+              headers: { "Authorization": `Bearer ${token}` },
+              body: formData
+            });
+            const uploadResult = await uploadRes.json();
+            if (!uploadRes.ok) {
+              alert("File upload failed: " + uploadResult.error);
+              setUploadStatus("Upload failed");
+              return;
             }
-        }}
-        className="bg-cyan-500 px-4 py-2 rounded"
-        >
-        Add Event
-        </button>
-    </div>
-    ) : (
-    <div className="bg-[#0f172a] p-6 rounded-xl text-gray-300">
-        <h3 className="text-gray-400">Audit Event Access</h3>
-        <p className="text-sm">
-            Only employees and admins can create or modify audit records. Auditors can review and verify logs.
-        </p>
-    </div>
-    )}
+            fileInfo = { fileName: uploadResult.fileName, hash: uploadResult.hash };
+            setUploadStatus("File uploaded ✓");
+          }
+
+          // 2. Add the audit event (include file info if present)
+          const payload = {
+            ...newEvent,
+            ...(fileInfo && { attachedFile: fileInfo.fileName, fileHash: fileInfo.hash })
+          };
+          const response = await fetch(`${API_URL}/addLog`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+          });
+
+          if (response.ok) {
+            alert(fileInfo
+              ? `Event added! File: ${fileInfo.fileName} | Hash: ${fileInfo.hash}`
+              : "Event added successfully!"
+            );
+            setNewEvent({ userId: "", action: "CREATE", resource: "", status: "SUCCESS" });
+            setUploadFile(null);
+            setUploadStatus("");
+          } else {
+            alert("Failed to add event: " + response.statusText);
+          }
+        } catch (error) {
+          alert("Error: " + error.message);
+        }
+      }}
+      className="bg-cyan-500 px-4 py-2 rounded w-full font-semibold hover:bg-cyan-600 transition"
+    >
+      Add Event{uploadFile ? " & Upload File" : ""}
+    </button>
+
+    {uploadStatus && <p className="text-sm text-gray-400">{uploadStatus}</p>}
+  </div>
+) : (
+  <div className="bg-[#0f172a] p-6 rounded-xl text-gray-300">
+    <h3 className="text-gray-400">Audit Event Access</h3>
+    <p className="text-sm">
+      Only employees and admins can create or modify audit records. Auditors can review and verify logs.
+    </p>
+  </div>
+)}
 
 <h2 className={`text-3xl font-bold ${isValid ? "text-green-400" : "text-red-400"}`}>
     {isValid ? "100%" : "COMPROMISED"}
@@ -812,46 +868,6 @@ Audit<span className="text-cyan-400">Chain</span>
     </div>
 )}
 
-{role === 'employee' && (
-    <div className="bg-[#0f172a] p-6 rounded-xl border border-cyan-800">
-        <h2 className="text-xl font-semibold text-gray-200">Employee Dashboard</h2>
-        <div className="grid grid-cols-3 gap-6 mt-4">
-            <div className="bg-[#020617] p-4 rounded-xl border border-cyan-800">
-                <h3 className="text-gray-300 mb-3">My Activity</h3>
-                {employeeEvents.length === 0 ? (
-                    <p className="text-sm text-gray-400">No recent personal activity.</p>
-                ) : (
-                    employeeEvents.slice(0, 5).map(event => (
-                        <div key={event.eventId} className="mb-3 p-3 rounded-xl bg-[#0b1724] border border-cyan-800">
-                            <p className="text-white text-sm">{event.action} {event.resource}</p>
-                            <p className="text-xs text-gray-400">{event.timestamp.split('T')[0]} • {event.status}</p>
-                        </div>
-                    ))
-                )}
-            </div>
-            <div className="bg-[#020617] p-4 rounded-xl border border-cyan-800">
-                <h3 className="text-gray-300 mb-3">Transaction Status</h3>
-                <p className="text-sm text-gray-400">Pending / confirmed status for your actions.</p>
-                <div className="mt-3 space-y-2 text-sm text-gray-300">
-                    {employeeEvents.slice(0, 5).map(event => (
-                        <div key={event.eventId} className="p-3 rounded-xl bg-[#0f172a] border border-cyan-800">
-                            <p>{event.eventId}</p>
-                            <p>{event.transactionStatus}</p>
-                        </div>
-                    ))}
-                </div>
-            </div>
-            <div className="bg-[#020617] p-4 rounded-xl border border-cyan-800">
-                <h3 className="text-gray-300 mb-3">Notifications</h3>
-                <p className="text-sm text-gray-400">Approval, rejection, or error events appear here.</p>
-                <div className="mt-3 space-y-2 text-sm text-gray-300">
-                    <p>{failedEvents > 0 ? `${failedEvents} failed event(s)` : 'No recent errors.'}</p>
-                    <p>Latest: {employeeEvents[0]?.action || 'No recent activity'}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-)}
 
 </div>
 

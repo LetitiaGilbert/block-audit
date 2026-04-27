@@ -2,19 +2,40 @@ import express from "express";
 import multer from "multer";
 import crypto from "crypto";
 import fs from "fs";
+import path from "path";
 import cors from 'cors';
-
+import fetch from "node-fetch";
 
 const app = express();
 app.use(cors());
-const upload = multer({
-  dest: "uploads/",
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = ["image/png", "image/jpeg", "application/pdf"];
+app.use(express.json()); // Add this for JSON body parsing
 
-    if (!allowedTypes.includes(file.mimetype)) {
-      return cb(new Error("Invalid file type"));
+// Create uploads directory if it doesn't exist
+const uploadsDir = path.join(process.cwd(), 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir);
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (req, file, cb) => {
+    // Generate unique filename with timestamp and random string
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // Increased to 10MB
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ["image/png", "image/jpeg", "image/jpg", "application/pdf", "text/plain"];
+    const allowedExtensions = [".png", ".jpg", ".jpeg", ".pdf", ".txt"];
+
+    if (!allowedTypes.includes(file.mimetype) || !allowedExtensions.includes(path.extname(file.originalname).toLowerCase())) {
+      return cb(new Error("Invalid file type. Allowed: PNG, JPG, PDF, TXT"));
     }
 
     cb(null, true);
@@ -22,34 +43,54 @@ const upload = multer({
 });
 
 app.post("/upload", upload.single("file"), async (req, res) => {
-  const filePath = req.file.path;
-  const fileBuffer = fs.readFileSync(filePath);
-  const hash = crypto.createHash("sha256").update(fileBuffer).digest("hex");
-  fs.unlinkSync(filePath);
-
-  // ── NEW: record hash on your chain ──────────────────
-  let chainResult = null;
   try {
-    const response = await fetch("http://localhost:3000/record", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        hash: hash,
-        filename: req.file.originalname,
-        uploadedBy: req.body.uploadedBy || "unknown"
-      })
-    });
-    chainResult = await response.json();
-  } catch (err) {
-    console.error("Chain recording failed:", err.message);
-  }
-  // ────────────────────────────────────────────────────
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
 
-  res.json({
-    fileName: req.file.originalname,
-    hash: hash,
-    chain: chainResult  // includes block number, block hash, timestamp
-  });
+    const filePath = req.file.path;
+    const fileBuffer = fs.readFileSync(filePath);
+    const hash = crypto.createHash("sha256").update(fileBuffer).digest("hex");
+
+    // Record on blockchain
+    let chainResult = null;
+    try {
+      const response = await fetch("http://localhost:3000/record", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          hash: hash,
+          filename: req.file.originalname,
+          uploadedBy: req.body.uploadedBy || "unknown",
+          filePath: req.file.filename, // Store the unique filename
+          size: req.file.size,
+          mimetype: req.file.mimetype,
+          timestamp: Date.now()
+        })
+      });
+      if (!response.ok) {
+        throw new Error(`Blockchain server error: ${response.status}`);
+      }
+      chainResult = await response.json();
+    } catch (err) {
+      console.error("Blockchain recording failed:", err.message);
+      // Clean up file if blockchain fails
+      fs.unlinkSync(filePath);
+      return res.status(500).json({ error: "Failed to record on blockchain" });
+    }
+
+    res.json({
+      message: "File uploaded and recorded successfully",
+      fileName: req.file.originalname,
+      storedName: req.file.filename,
+      hash: hash,
+      size: req.file.size,
+      chain: chainResult
+    });
+  } catch (err) {
+    console.error("Upload error:", err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.get("/", (req, res) => {
